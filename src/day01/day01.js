@@ -1,8 +1,9 @@
 import fs from 'fs';
+import path from 'path';
 
 function runScript() {
     const data = fs
-        .readFileSync('../src/day01/data.txt', 'utf8')
+        .readFileSync(path.join(__dirname, '../../src/day01/data.txt'), 'utf8')
         .split('\n')
         .map(x => parseInt(x, 10));
     console.log('===========================');
@@ -23,7 +24,7 @@ function runScript() {
     result = data.reduce((sum, x) => sum + requiredFuel(x), 0);
     console.log(`==  ${result}`);
     console.log('==');
-    console.log('===========================');
+    console.log('===========================\n');
 }
 
 export default { runScript };

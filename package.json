@@ -1,8 +1,8 @@
 {
-  "name": "nodejs-es6-starter",
-  "version": "0.0.0",
-  "description": "",
-  "author": "",
+  "name": "advent-of-code-2019",
+  "version": "1.0.0",
+  "description": "advent of code 2019 solutions in javascript",
+  "author": "Mateusz Saczawa",
   "contributors": [],
   "license": "MIT",
   "keywords": [],
