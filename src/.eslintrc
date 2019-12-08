@@ -7,6 +7,7 @@
   "extends": "airbnb-base",
   "rules": {
     "indent": ["OFF", 4],
-    "no-console": "off"
+    "no-console": "OFF",
+    "no-param-reassign": "OFF"
   }
 }

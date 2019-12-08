@@ -63,7 +63,7 @@ function runScript() {
     console.log('==');
     console.log(`==  Execution time: ${t1.toFixed(3)} ms`);
     console.log('==');
-    console.log('===========================');
+    console.log('===========================\n');
 }
 
 export default { runScript };
