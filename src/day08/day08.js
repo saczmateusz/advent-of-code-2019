@@ -12,7 +12,7 @@ function runScript() {
 
     console.log('===========================');
     console.log('==');
-    console.log('==  Day 1');
+    console.log('==  Day 8');
     console.log('==');
     console.log('==  Part 1:');
 
@@ -23,20 +23,16 @@ function runScript() {
         let onesTimesTwos = 0;
         while (iterator < data.length) {
             const layer = [...data.slice(iterator, iterator + 150)];
-            console.log(`Layer elements: ${layer}\nLayer len: ${layer.length}`);
             layers.push(layer);
             const counter = layer.reduce(
                 ([zeros, ones, twos], current) => {
                     switch (current) {
                         case 0:
-                            zeros += 1;
-                            return [zeros, ones, twos];
+                            return [zeros + 1, ones, twos];
                         case 1:
-                            ones += 1;
-                            return [zeros, ones, twos];
+                            return [zeros, ones + 1, twos];
                         case 2:
-                            twos += 1;
-                            return [zeros, ones, twos];
+                            return [zeros, ones, twos + 1];
                         default:
                             break;
                     }
@@ -50,34 +46,52 @@ function runScript() {
             }
             iterator += 150;
         }
-        return onesTimesTwos;
+        return [layers, onesTimesTwos];
     }
 
-    const t0 = performance.now();
-
+    let t0 = performance.now();
     const result = countPixels();
-    const t1 = performance.now() - t0;
+    let t1 = performance.now() - t0;
 
-    console.log(`==  ${result}`);
+    console.log(`==  ${result[1]}`);
     console.log('==');
     console.log(`==  Execution time: ${t1.toFixed(3)} ms`);
     console.log('==');
-    // console.log('==  Part 2:');
+    console.log('==  Part 2:\n');
 
-    // t0 = performance.now();
-    // function requiredFuel(number) {
-    //     const fuel = Math.floor(number / 3) - 2;
-    //     if (fuel <= 0) return 0;
-    //     return fuel + requiredFuel(fuel);
-    // }
-    // result = data.reduce((sum, x) => sum + requiredFuel(x), 0);
-    // t1 = performance.now() - t0;
+    t0 = performance.now();
+    const picture = result[0][result[0].length - 1];
+    for (let layer = result[0].length - 2; layer >= 0; layer -= 1) {
+        for (let pixel = 0; pixel < result[0][layer].length; pixel += 1) {
+            picture[pixel] =
+                result[0][layer][pixel] === 2
+                    ? picture[pixel]
+                    : result[0][layer][pixel];
+        }
+    }
 
-    // console.log(`==  ${result}`);
-    // console.log('==');
-    // console.log(`==  Execution time: ${t1.toFixed(3)} ms`);
-    // console.log('==');
-    // console.log('===========================\n');
+    function drawPicture() {
+        let line = '';
+        for (let pixel = 0; pixel < picture.length; pixel += 1) {
+            line += (picture[pixel] === 0
+                ? '██'
+                : picture[pixel] === 1
+                ? '░░'
+                : ''
+            ).toString();
+            if ((pixel + 1) % 25 === 0 && pixel > 0) {
+                line += '\n';
+            }
+        }
+        console.log(line);
+    }
+
+    drawPicture();
+    t1 = performance.now() - t0;
+    console.log('==');
+    console.log(`==  Execution time: ${t1.toFixed(3)} ms`);
+    console.log('==');
+    console.log('===========================\n');
 }
 
 export default { runScript };
