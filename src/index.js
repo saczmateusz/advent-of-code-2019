@@ -1,5 +1,6 @@
 import http from 'http';
-import day01 from './day01/day01';
+// import day from './day01/day01';
+import day from './day02/day02';
 
 const hostname = '127.0.0.1';
 const port = 4000;
@@ -13,4 +14,4 @@ server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-day01.runScript();
+day.runScript();
