@@ -10,7 +10,8 @@ import http from 'http';
 // import day from './day08/day08';
 // import day from './day09/day09'; // to reformat
 // import day from './day10/day10'; // wtfisthiscode
-import day from './day11/day11'; // todo
+// import day from './day11/day11'; // todo
+import day from './day12/day12'; // todo
 
 const hostname = '127.0.0.1';
 const port = 4000;

@@ -4,74 +4,83 @@ import { performance } from 'perf_hooks';
 
 function runScript() {
     const dataOriginal = fs
-        .readFileSync(path.join(__dirname, '../../src/day11/data.txt'), 'utf8')
+        .readFileSync(
+            path.join(__dirname, '../../src/day11/Input11.txt'),
+            'utf8',
+        )
         .split(',')
         .map(x => parseInt(x, 10));
     // console.log(dataOriginal.length);
+
     for (let i = 0; i < 34463338; i += 1) {
         dataOriginal.push(0);
     }
     // console.log(dataOriginal.toString());
     const data = Array.from(dataOriginal);
-    let coordX = 0;
-    let coordY = 0;
     const coords = {};
-    let uniqueCounter = 0;
+    let xCoord = 0;
+    let yCoord = 0;
     let robotDirection = 0;
+    const robotPositions = [[0, 0]];
 
-    function getColorFromTab() {
-        return (
-            coords && coords[`${coordX}`] && coords[`${coordX}`][`${coordY}`]
-        );
+    function getColor() {
+        const color =
+            (coords[`${xCoord}`] && coords[`${xCoord}`][`${yCoord}`]) || 0;
+        console.log(`GET COLOR: ${color}`);
+        return color;
     }
 
-    function generateCoordsTab(direction, color) {
-        if (!coords[`${coordX}`]) coords[`${coordX}`] = {};
-
-        if (!coords[`${coordX}`][`${coordY}`]) {
-            coords[`${coordX}`][`${coordY}`] = color;
-            uniqueCounter += 1;
-        } else {
-            coords[`${coordX}`][`${coordY}`] = color;
+    function setCoord(color) {
+        if (!coords[`${xCoord}`]) {
+            console.log(`${xCoord} not found in coords array`);
+            coords[`${xCoord}`] = {};
         }
+        console.log(`SET COLOR TO ${color} AT POSITION ${xCoord}, ${yCoord}`);
+        coords[`${xCoord}`][`${yCoord}`] = color;
+        // console.log(coords);
+    }
+
+    function setPosition(direction) {
+        console.log(`SET DIRECTION ${direction} FROM ${xCoord}, ${yCoord}`);
+        // if (direction) {
+        //     console.log('TURN RIGHT');
+        //     robotDirection = (robotDirection + 1) % 4;
+        // } else {
+        //     console.log('TURN LEFT');
+        //     robotDirection = robotDirection - 1 >= 0 ? robotDirection - 1 : 3;
+        // }
+
+        robotDirection = (robotDirection + direction * 2 - 1 + 4) % 4;
 
         switch (robotDirection) {
-            case 1:
-                coordX += 1;
-                break;
-            case 3:
-                coordX -= 1;
-                break;
             case 0:
-                coordY += 1;
+                yCoord += 1;
                 break;
             case 2:
-                coordY -= 1;
+                yCoord -= 1;
+                break;
+            case 1:
+                xCoord += 1;
+                break;
+            case 3:
+                xCoord -= 1;
                 break;
             default:
                 break;
         }
-
-        if (direction) {
-            robotDirection = (robotDirection + 1) % 4;
-        } else {
-            robotDirection = robotDirection - 1 >= 0 ? robotDirection - 1 : 3;
-        }
+        robotPositions.push(`(${xCoord}, ${yCoord})`);
+        console.log(`SET POSITION TO ${xCoord}, ${yCoord}`);
     }
 
     function compute() {
         let i = 0;
-        let jj = 0;
         let relativeBase = 0;
-        const result = 0;
+        let inputValue = 0;
         let evenOutput = 0;
         const output = [0, 0];
-        let inputValue = 0;
+
         while (1) {
-            jj += 1;
-            if (jj % 10000000 === 0) console.log(`instr: ${jj}`);
             let numAsString = data[i].toString();
-            // console.log(numAsString);
             if (numAsString.length < 5) {
                 for (let j = numAsString.length; j < 5; j += 1) {
                     numAsString = `0${numAsString}`;
@@ -86,7 +95,8 @@ function runScript() {
             const thirdParamMode = parseInt(numAsString[0], 10);
             switch (operation) {
                 case 99:
-                    return Object.keys(coords).length;
+                    console.log('OPCODE #99');
+                    return 0;
                 case 1:
                     data[
                         thirdParamMode === 2
@@ -132,7 +142,9 @@ function runScript() {
                     i += 4;
                     break;
                 case 3:
-                    inputValue = getColorFromTab();
+                    console.log('===============================');
+                    inputValue = getColor();
+                    console.log(`INPUT VAL: ${inputValue}`);
                     data[
                         thirdParamMode === 2
                             ? data[i + 3] + relativeBase
@@ -141,18 +153,7 @@ function runScript() {
                     i += 2;
                     break;
                 case 4:
-                    // console.log(i);
-                    if (!evenOutput) {
-                        output[0] =
-                            data[
-                                firstParamMode === 1
-                                    ? i + 1
-                                    : firstParamMode === 2
-                                    ? data[i + 1] + relativeBase
-                                    : data[i + 1]
-                            ];
-                        evenOutput = !evenOutput;
-                    } else {
+                    if (evenOutput) {
                         output[1] =
                             data[
                                 firstParamMode === 1
@@ -161,11 +162,23 @@ function runScript() {
                                     ? data[i + 1] + relativeBase
                                     : data[i + 1]
                             ];
+                        console.log(`COLLECT NEXT DIRECTION: ${output[1]}`);
+                        setCoord(output[0]);
+                        setPosition(output[1]);
                         evenOutput = !evenOutput;
-                        generateCoordsTab(output[0], output[1]);
+                    } else {
+                        output[0] =
+                            data[
+                                firstParamMode === 1
+                                    ? i + 1
+                                    : firstParamMode === 2
+                                    ? data[i + 1] + relativeBase
+                                    : data[i + 1]
+                            ];
+                        console.log(`COLLECT NEXT COLOR: ${output[0]}`);
+
+                        evenOutput = !evenOutput;
                     }
-                    console.log('Instruction 4 output values:');
-                    console.log(output);
                     i += 2;
                     break;
                 case 5:
@@ -235,8 +248,6 @@ function runScript() {
                             : data[i + 3]
                     ] =
                         data[
-                            // data[i + 1] * !firstParamMode +
-                            //     (i + 1) * firstParamMode
                             firstParamMode === 1
                                 ? i + 1
                                 : firstParamMode === 2
@@ -272,17 +283,29 @@ function runScript() {
     }
 
     const t0 = performance.now();
-    const res = compute();
-    console.log(`==  ${res}`);
+    compute();
+    // console.log(`==  ${res}`);
+
+    // console.log('COORDS:');
+    // console.log(coords);
+    console.log(robotPositions.toString());
 
     const t1 = performance.now() - t0;
 
+    let result = 0;
+
+    for (const key in coords) {
+        if (!coords.hasOwnProperty(key)) continue;
+        result += Object.keys(coords[key]).length;
+    }
+
+    console.log(`RESULT: ${result}`);
     // t0 = performance.now();
 
     // t1 = performance.now() - t0;
     console.log('===========================');
     console.log('==');
-    console.log('==  Day 9');
+    console.log('==  Day 10');
     console.log('==');
     console.log('==  Part 1:');
     // console.log(`==  ${data}`);
