@@ -4,7 +4,7 @@ import { performance } from 'perf_hooks';
 
 function runScript() {
     const dataOriginal = fs
-        .readFileSync(path.join(__dirname, '../../src/day12/test.txt'), 'utf8')
+        .readFileSync(path.join(__dirname, '../../src/day12/data.txt'), 'utf8')
         .split('\n')
         .map(moon => moon.split(',').map(coord => parseInt(coord, 10)))
         .map((moon) => {
