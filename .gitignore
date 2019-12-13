@@ -2,7 +2,6 @@ dist
 node_modules
 npm-debug.log
 package-lock.json
-day05
 day07
 day09
 day10
