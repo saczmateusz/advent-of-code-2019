@@ -12,7 +12,7 @@ function runScript() {
         .map(x => parseInt(x, 10));
     // console.log(dataOriginal.length);
 
-    for (let i = 0; i < 34463338; i += 1) {
+    for (let i = 0; i < 5000; i += 1) {
         dataOriginal.push(0);
     }
     // console.log(dataOriginal.toString());
@@ -37,7 +37,7 @@ function runScript() {
         }
         console.log(`SET COLOR TO ${color} AT POSITION ${xCoord}, ${yCoord}`);
         coords[`${xCoord}`][`${yCoord}`] = color;
-        // console.log(coords);
+        console.log(coords);
     }
 
     function setPosition(direction) {
@@ -78,7 +78,7 @@ function runScript() {
         let inputValue = 0;
         let evenOutput = 0;
         const output = [0, 0];
-
+        let ii = 0;
         while (1) {
             let numAsString = data[i].toString();
             if (numAsString.length < 5) {
@@ -143,6 +143,7 @@ function runScript() {
                     break;
                 case 3:
                     console.log('===============================');
+                    console.log(`iter: ${ii}`);
                     inputValue = getColor();
                     console.log(`INPUT VAL: ${inputValue}`);
                     data[
@@ -151,6 +152,8 @@ function runScript() {
                             : data[i + 3]
                     ] = inputValue;
                     i += 2;
+                    ii += 1;
+                    if (ii > 23) return 0;
                     break;
                 case 4:
                     if (evenOutput) {
