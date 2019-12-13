@@ -1,5 +1,5 @@
 # [🎄 Advent of Code 🎄](https://adventofcode.com/)
-Advent Of Code 2019 Solutions in Javascript using Node.js server
+Advent Of Code 2019 Solutions in Javascript using Node.js
 
 ## :santa: Prerequisites
 
