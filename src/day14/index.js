@@ -3,8 +3,6 @@ import path from 'path';
 import { performance } from 'perf_hooks';
 
 function runScript() {
-    const t0 = performance.now();
-
     const dataOriginal = fs
         .readFileSync(path.join(__dirname, '../../src/day14/data.txt'), 'utf8')
         .split('\n')
@@ -52,15 +50,6 @@ function runScript() {
         }
 
         produce(count) {
-            // const productsReady = this.recipe.every(
-            //     chemical =>
-            //         getChemicalCount(chemical) >= this.productCount * count,
-            // );
-
-            // if (!productsReady) {
-            //     console.log(`${this.product} waiting for ${count} products`);
-            // }
-
             while (!this.allProductsReady(count)) {
                 let i = 0;
                 while (i < this.recipe.length) {
@@ -70,7 +59,8 @@ function runScript() {
                         totalOres += recipeCount;
                         storage.ORE += recipeCount;
                     } else if (getChemicalCount(recipeName) < recipeCount) {
-                        const needed = recipeCount - getChemicalCount(recipeName);
+                        const needed =
+                            recipeCount - getChemicalCount(recipeName);
                         const units = Math.ceil(
                             needed / Factories[recipeName].productCount,
                         );
@@ -86,16 +76,15 @@ function runScript() {
                 i += 2;
             }
             storage[this.product] += this.productCount * count;
-            // console.log(
-            //     `${this.product}: created ${this.productCount * count}`,
-            // );
         }
 
         allProductsReady(count) {
             const recipe = Factories[this.product].recipe;
             let i = 0;
             while (i < recipe.length) {
-                if (getChemicalCount(recipe[i]) < recipe[i + 1] * count) return false;
+                if (getChemicalCount(recipe[i]) < recipe[i + 1] * count) {
+                    return false;
+                }
                 i += 2;
             }
             return true;
@@ -104,7 +93,9 @@ function runScript() {
 
     function setFactory(recipe) {
         if (!Factories) Factories = {};
-        if (!Factories[recipe[0]]) Factories[recipe[0]] = new ChemicalFactory(recipe);
+        if (!Factories[recipe[0]]) {
+            Factories[recipe[0]] = new ChemicalFactory(recipe);
+        }
     }
 
     setChemicalCount('ORE', 0);
@@ -116,27 +107,38 @@ function runScript() {
         setFactory(reactionList[i]);
     }
 
-    // console.log(storage);
-    // console.log(Factories);
-
+    let t0 = performance.now();
     Factories.FUEL.produce(1);
+    const totalOreToProduceOneFUEL = totalOres;
     const t1 = performance.now() - t0;
 
-    console.log('===========================');
+    t0 = performance.now();
+    while (totalOres < 1000000000000) {
+        Factories.FUEL.produce(1);
+    }
+    /* while loop breaks AFTER reaching 1 trillion OREs
+    and completing current FUEL producing, given that,
+    MAX FUEL needs to be reduced by 1 because it
+    exceeds 1 trillion ORE limit
+    BTW the code needs 310 seconds to complete on my machine */
+    const fuelProduced = getChemicalCount('FUEL') - 1;
+    const t2 = performance.now() - t0;
+
+    console.log('=====================================');
     console.log('==');
     console.log('==  Day 14');
     console.log('==');
     console.log('==  Part 1:');
-    console.log(`==  ${totalOres}`);
+    console.log(`==  ${totalOreToProduceOneFUEL}`);
     console.log('==');
     console.log(`==  Execution time: ${t1.toFixed(3)} ms`);
     console.log('==');
-    // console.log('==  Part 2:');
-    // console.log(`==  ${data}`);
-    // console.log('==');
-    // console.log(`==  Execution time: ${t1.toFixed(3)} ms`);
-    // console.log('==');
-    console.log('===========================\n');
+    console.log('==  Part 2:');
+    console.log(`==  ${fuelProduced}`);
+    console.log('==');
+    console.log(`==  Execution time: ${t2.toFixed(3)} ms`);
+    console.log('==');
+    console.log('=====================================\n');
 }
 
 export default { runScript };
